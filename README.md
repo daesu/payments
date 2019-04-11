@@ -5,11 +5,9 @@ Simple example of a CRUD payments app utilising go-swagger, sqlx, and go-convey.
 Go and postgresql installed
 
 ### Quick Start:
- - dependencies
-   Go environment and postgresql installed
-
- - Clone this git repo to your go path. 
-   e.g. go/src/github/
+  - Clone this git repo to your go path. 
+   
+    e.g. go/src/github/
 
    `git clone https://github.com/daesu/payments`
 
@@ -20,16 +18,19 @@ Go and postgresql installed
    `DATABASE_PASSWORD=<postgres password>`
 
    `DATABASE_NAME=<postgres db name>`
-   e.g. DATABASE_NAME=payments
+   
+    e.g. DATABASE_NAME=payments
 
    `LOG_LEVEL`
-   Optional. Can be set to info, debug, error, fatal
+   
+    Optional. Can be set to info, debug, error, fatal
 
    `DATABASE_URL=<postgres connection string>`
-   e.g. postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable
+    
+    e.g. postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable
 
  - Create & Seed database 
- `./db/migration.sh`
+  `./db/migration.sh`
 
  - `make init` 
 
