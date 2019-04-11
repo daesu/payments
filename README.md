@@ -1,10 +1,12 @@
 # payments
 Simple example of a CRUD payments app utilising go-swagger, sqlx, and go-convey.
 
-### dependencies
-Go and postgresql installed
+### Dependencies
+- Go 
+- postgresql server / client 
+- dbmate (https://github.com/amacneil/dbmate) 
 
-### Quick Start:
+### Quick Start
   - Clone this git repo to your go path. 
    
     e.g. go/src/github/
