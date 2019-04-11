@@ -14,19 +14,18 @@ Go and postgresql installed
  - Set environment variables.
 
    `DATABASE_HOST=<postgres host>`
+   
    `DATABASE_USERNAME=<postgres username>`
+   
    `DATABASE_PASSWORD=<postgres password>`
 
    `DATABASE_NAME=<postgres db name>`
-   
     e.g. DATABASE_NAME=payments
 
-   `LOG_LEVEL`
-   
+   `LOG_LEVEL` 
     Optional. Can be set to info, debug, error, fatal
 
    `DATABASE_URL=<postgres connection string>`
-    
     e.g. postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable
 
  - Create & Seed database 
