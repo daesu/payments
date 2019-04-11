@@ -1,0 +1,346 @@
+swagger: '2.0'
+info:
+  title: Payments API
+  version: '0.1'
+basePath: /v1
+paths:
+  /health:
+    get:
+      summary: Health
+      operationId: getHealth
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/health'
+        '400':
+          $ref: '#/responses/invalid-request'
+      tags:
+        - health
+
+  /payments:
+    get:
+      summary: List Payments
+      operationId: listPayments
+      parameters:
+        - $ref: '#/parameters/pageSize'
+        - $ref: '#/parameters/offset'
+        - $ref: '#/parameters/orderBy'
+      responses:
+        '200':
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/payment-list'
+        '400':
+          $ref: '#/responses/invalid-request'
+      tags:
+        - payment
+    post:
+      summary: Add a new Payment
+      operationId: createPayment
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          description: The payment to create
+          name: payment
+          schema:
+            $ref: '#/definitions/create-payment'
+      responses:
+        '201':
+          description: 'Created'
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          $ref: '#/responses/invalid-request'
+        '409':
+          $ref: '#/responses/conflict'
+      tags:
+        - payment
+  /payments/{paymentID}:
+    put:
+      summary: Update Payment
+      operationId: updatePayment
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: paymentID
+          type: string
+          required: true
+        - in: body
+          description: fields to update for a particular Payment
+          name: Update Payment
+          required: true
+          schema:
+            $ref: '#/definitions/update-payment'
+      responses:
+        '200':
+          description: 'Resource updated successfully'
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          $ref: '#/responses/invalid-request'
+        '404':
+          $ref: '#/responses/not-found'
+      tags:
+        - payment
+    delete:
+      summary: Delete Payment
+      operationId: deletePayment
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: paymentID
+          type: string
+          required: true
+      responses:
+        '200':
+          description: 'Resource deleted successfully'
+        '400':
+          $ref: '#/responses/invalid-request'
+        '404':
+          $ref: '#/responses/not-found'
+      tags:
+        - payment
+    get:
+      summary: Get Payment
+      operationId: getPayment
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: paymentID
+          type: string
+          required: true
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          $ref: '#/responses/invalid-request'
+        '404':
+          $ref: '#/responses/not-found'
+      tags:
+        - payment
+
+definitions:
+  health:
+    type: object
+    title: Health
+    description: properties for Health
+    properties:
+      DateTime:
+        type: string
+  update-payment:
+    type: object
+    title: updatePayment
+    description: properties to update a payment
+    properties:
+      reference:
+        type: string
+      payment_purpose:
+        type: string
+  create-payment:
+    type: object
+    title: createPayment
+    description: properties to create a payment
+    required:
+      - amount
+      - currency
+      - beneficiary
+      - debtor
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      end_to_end_reference:
+        type: string
+        default: NOTPROVIDED
+      reference:
+        type: string
+      payment_purpose:
+        type: string
+      beneficiary:
+        $ref: '#/definitions/create-customer-account'
+      debtor:
+        $ref: '#/definitions/create-customer-account'
+  payment:
+    type: object
+    title: Payment
+    description: properties for payment
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+        enum:
+          - Payment
+          - DirectDebit
+          - Payment, DirectDebit'
+          - Mandate
+      version:
+        type: integer
+      organisation_id:
+        type: string
+      attributes:
+        $ref: '#/definitions/payment-attribute'
+  payment-attribute:
+    type: object
+    title: Attributes
+    description: properties for payment attributes
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+      end_to_end_reference:
+        type: string
+      numeric_reference:
+        type: string
+      payment_id:
+        type: string
+      payment_purpose:
+        type: string
+      payment_scheme:
+        type: string
+      payment_type:
+        type: string
+      processing_date:
+        type: string
+        format: date
+      reference:
+        type: string
+      scheme_payment_sub_type:
+        type: string
+      scheme_payment_type:
+        type: string
+      beneficiary_party:
+        $ref: '#/definitions/customer-account'
+      debtor_party:
+        $ref: '#/definitions/customer-account'
+  payment-list:
+    type: object
+    properties:
+      Metadata:
+        $ref: '#/definitions/list-metadata'
+      Data:
+        type: array
+        items:
+          $ref: '#/definitions/payment'
+  customer-account:
+    type: object
+    title: Customer Account
+    description: properties for customer account
+    required:
+      - account_name
+      - account_number
+      - account_number_code
+      - bank_id
+      - bank_id_code
+    properties:
+      name:
+        type: string
+      bank_id:
+        type: integer
+      bank_id_code:
+        type: string
+      account_type:
+        type: string
+      address:
+        type: string
+      account_number_code:
+        type: string
+      account_number:
+        type: string
+      account_name:
+        type: string
+  create-customer-account:
+    type: object
+    title: Customer Account
+    description: properties for customer account
+    properties:
+      name:
+        type: string
+      bank_id:
+        type: integer
+      bank_id_code:
+        type: string
+      account_type:
+        type: string
+      address:
+        type: string
+      account_number_code:
+        type: string
+      account_number:
+        type: string
+      account_name:
+        type: string
+  error-response:
+    type: object
+    title: Error Response
+    description: Standard error format
+    properties:
+      Code:
+        type: string
+      Message:
+        type: string
+  list-metadata:
+    type: object
+    title: List Metadata
+    properties:
+      TotalSize:
+        type: integer
+        x-omitempty: false
+        format: int64
+      PageSize:
+        type: integer
+        x-omitempty: false
+        format: int64
+      Offset:
+        type: integer
+        x-omitempty: false
+        format: int64
+
+responses:
+  unauthorized:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/error-response'
+  invalid-request:
+    description: Invalid request
+    schema:
+      $ref: '#/definitions/error-response'
+  forbidden:
+    description: Insufficient privilege to execute action.
+    schema:
+      $ref: '#/definitions/error-response'
+  not-found:
+    description: Not found.
+    schema:
+      $ref: '#/definitions/error-response'
+  conflict:
+    description: Duplicate resource
+    schema:
+      $ref: '#/definitions/error-response'
+
+parameters:
+  pageSize:
+    name: pageSize
+    in: query
+    type: string
+    default: '100'
+  offset:
+    name: offset
+    in: query
+    type: string
+    default: '0'
+  orderBy:
+    name: orderBy
+    in: query
+    type: string
+    default: 'createddate'
+    pattern: '^[A-Za-z0-9_]+$'
