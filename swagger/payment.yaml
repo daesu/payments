@@ -44,6 +44,7 @@ paths:
         - in: body
           description: The payment to create
           name: payment
+          required: true
           schema:
             $ref: '#/definitions/create-payment'
       responses:
@@ -138,11 +139,24 @@ definitions:
     type: object
     title: updatePayment
     description: properties to update a payment
+    required:
+      - amount
+      - currency
+      - beneficiary
+      - debtor
     properties:
+      amount:
+        type: number
+      currency:
+        type: string
       reference:
         type: string
       payment_purpose:
         type: string
+      beneficiary:
+        $ref: '#/definitions/customer-account'
+      debtor:
+        $ref: '#/definitions/customer-account'
   create-payment:
     type: object
     title: createPayment
@@ -165,9 +179,9 @@ definitions:
       payment_purpose:
         type: string
       beneficiary:
-        $ref: '#/definitions/create-customer-account'
+        $ref: '#/definitions/customer-account'
       debtor:
-        $ref: '#/definitions/create-customer-account'
+        $ref: '#/definitions/customer-account'
   payment:
     type: object
     title: Payment
@@ -241,27 +255,6 @@ definitions:
       - account_number_code
       - bank_id
       - bank_id_code
-    properties:
-      name:
-        type: string
-      bank_id:
-        type: integer
-      bank_id_code:
-        type: string
-      account_type:
-        type: string
-      address:
-        type: string
-      account_number_code:
-        type: string
-      account_number:
-        type: string
-      account_name:
-        type: string
-  create-customer-account:
-    type: object
-    title: Customer Account
-    description: properties for customer account
     properties:
       name:
         type: string

@@ -25,7 +25,7 @@ type CreatePayment struct {
 
 	// beneficiary
 	// Required: true
-	Beneficiary *CreateCustomerAccount `json:"beneficiary"`
+	Beneficiary *CustomerAccount `json:"beneficiary"`
 
 	// currency
 	// Required: true
@@ -33,7 +33,7 @@ type CreatePayment struct {
 
 	// debtor
 	// Required: true
-	Debtor *CreateCustomerAccount `json:"debtor"`
+	Debtor *CustomerAccount `json:"debtor"`
 
 	// end to end reference
 	EndToEndReference *string `json:"end_to_end_reference,omitempty"`

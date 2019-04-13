@@ -6,6 +6,7 @@ package payment
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -32,6 +33,7 @@ type CreatePaymentParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*The payment to create
+	  Required: true
 	  In: body
 	*/
 	Payment *models.CreatePayment
@@ -50,7 +52,11 @@ func (o *CreatePaymentParams) BindRequest(r *http.Request, route *middleware.Mat
 		defer r.Body.Close()
 		var body models.CreatePayment
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			res = append(res, errors.NewParseError("payment", "body", "", err))
+			if err == io.EOF {
+				res = append(res, errors.Required("payment", "body"))
+			} else {
+				res = append(res, errors.NewParseError("payment", "body", "", err))
+			}
 		} else {
 			// validate body object
 			if err := body.Validate(route.Formats); err != nil {
@@ -61,6 +67,8 @@ func (o *CreatePaymentParams) BindRequest(r *http.Request, route *middleware.Mat
 				o.Payment = &body
 			}
 		}
+	} else {
+		res = append(res, errors.Required("payment", "body"))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

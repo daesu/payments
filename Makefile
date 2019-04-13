@@ -1,6 +1,10 @@
 SERVICE = payments
+DOCKER_IMAGE_TAG        ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
+DOCKER_REPO             ?= daesu
+DOCKER_IMAGE_NAME		?= payments
 
-generate: swagger
+docker-run:
+	docker-compose up
 
 clean:
 	rm -rf ./gen ./bin
@@ -23,8 +27,8 @@ build:
 tests:
 	make build 
 
-	# Sets up test database
+	# Set up test database
 	./db/migration_testdb.sh
 
 	# starts app and runs tests against testdb
-	./test.sh
+	./test/test.sh

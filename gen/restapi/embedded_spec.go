@@ -89,6 +89,7 @@ func init() {
             "description": "The payment to create",
             "name": "payment",
             "in": "body",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/create-payment"
             }
@@ -216,37 +217,6 @@ func init() {
     }
   },
   "definitions": {
-    "create-customer-account": {
-      "description": "properties for customer account",
-      "type": "object",
-      "title": "Customer Account",
-      "properties": {
-        "account_name": {
-          "type": "string"
-        },
-        "account_number": {
-          "type": "string"
-        },
-        "account_number_code": {
-          "type": "string"
-        },
-        "account_type": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "bank_id": {
-          "type": "integer"
-        },
-        "bank_id_code": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "create-payment": {
       "description": "properties to create a payment",
       "type": "object",
@@ -262,13 +232,13 @@ func init() {
           "type": "number"
         },
         "beneficiary": {
-          "$ref": "#/definitions/create-customer-account"
+          "$ref": "#/definitions/customer-account"
         },
         "currency": {
           "type": "string"
         },
         "debtor": {
-          "$ref": "#/definitions/create-customer-account"
+          "$ref": "#/definitions/customer-account"
         },
         "end_to_end_reference": {
           "type": "string",
@@ -460,7 +430,25 @@ func init() {
       "description": "properties to update a payment",
       "type": "object",
       "title": "updatePayment",
+      "required": [
+        "amount",
+        "currency",
+        "beneficiary",
+        "debtor"
+      ],
       "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "beneficiary": {
+          "$ref": "#/definitions/customer-account"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "debtor": {
+          "$ref": "#/definitions/customer-account"
+        },
         "payment_purpose": {
           "type": "string"
         },
@@ -612,6 +600,7 @@ func init() {
             "description": "The payment to create",
             "name": "payment",
             "in": "body",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/create-payment"
             }
@@ -763,37 +752,6 @@ func init() {
     }
   },
   "definitions": {
-    "create-customer-account": {
-      "description": "properties for customer account",
-      "type": "object",
-      "title": "Customer Account",
-      "properties": {
-        "account_name": {
-          "type": "string"
-        },
-        "account_number": {
-          "type": "string"
-        },
-        "account_number_code": {
-          "type": "string"
-        },
-        "account_type": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "bank_id": {
-          "type": "integer"
-        },
-        "bank_id_code": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "create-payment": {
       "description": "properties to create a payment",
       "type": "object",
@@ -809,13 +767,13 @@ func init() {
           "type": "number"
         },
         "beneficiary": {
-          "$ref": "#/definitions/create-customer-account"
+          "$ref": "#/definitions/customer-account"
         },
         "currency": {
           "type": "string"
         },
         "debtor": {
-          "$ref": "#/definitions/create-customer-account"
+          "$ref": "#/definitions/customer-account"
         },
         "end_to_end_reference": {
           "type": "string",
@@ -1007,7 +965,25 @@ func init() {
       "description": "properties to update a payment",
       "type": "object",
       "title": "updatePayment",
+      "required": [
+        "amount",
+        "currency",
+        "beneficiary",
+        "debtor"
+      ],
       "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "beneficiary": {
+          "$ref": "#/definitions/customer-account"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "debtor": {
+          "$ref": "#/definitions/customer-account"
+        },
         "payment_purpose": {
           "type": "string"
         },

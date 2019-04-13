@@ -1,18 +1,13 @@
 #!/bin/bash
 
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/$GOPATH/bin
-set -e
-set -u
+source env 
 
-export TEST_DB_NAME=payment_test
-export DATABASE_URL=postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$TEST_DB_NAME?sslmode=disable
+cd /code/code
 
-echo "Migration started"
+echo "kill database..."
+dbmate down
 
-# echo "Deleting database..."
-dbmate drop
-
-echo "Creating database..."
+echo "create database..."
 dbmate up
 
 echo "Migration finished"
@@ -33,6 +28,6 @@ psql \
     --single-transaction \
     --set AUTOCOMMIT=off \
     --set ON_ERROR_STOP=on \
-    $TEST_DB_NAME
+    $DATABASE_NAME
 
 echo "seed script successful"

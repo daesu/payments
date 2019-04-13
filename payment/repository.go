@@ -99,7 +99,7 @@ func DoesAccountExist(repo *repository, AccountNumber string) (bool, error) {
 }
 
 // DoesPartyExist checks if a given party exists
-func DoesPartyExist(repo *repository, params *models.CreateCustomerAccount) (bool, string) {
+func DoesPartyExist(repo *repository, params *models.CustomerAccount) (bool, string) {
 	log.Info("entered function DoesPartyExist")
 
 	sql := `
@@ -327,7 +327,7 @@ func (repo *repository) ListPayments(ctx context.Context, params *payment.ListPa
 
 // CreateParty creates a new party and any required rows
 // if they do not already exist in the related tables.
-func CreateParty(repo *repository, params *models.CreateCustomerAccount) (string, error) {
+func CreateParty(repo *repository, params *models.CustomerAccount) (string, error) {
 
 	// Begin a transaction
 	tx, err := repo.db.Beginx()
@@ -343,7 +343,7 @@ func CreateParty(repo *repository, params *models.CreateCustomerAccount) (string
 	}()
 
 	var bankID = params.BankID
-	exist, err := DoesBankExist(repo, params.BankID)
+	exist, err := DoesBankExist(repo, *params.BankID)
 	if !exist {
 		log.Info(fmt.Sprintf("bank with ID %d does not exist. Adding to table", params.BankID))
 		// Create basic bank entry if it doesn't exist.
@@ -375,7 +375,7 @@ func CreateParty(repo *repository, params *models.CreateCustomerAccount) (string
 
 	// Create / Use existing account for customer
 	var accountID = ""
-	exist, err = DoesAccountExist(repo, params.AccountNumber)
+	exist, err = DoesAccountExist(repo, *params.AccountNumber)
 	if !exist {
 		log.Info(fmt.Sprintf("account with ID %s does not exist. Adding to table", params.AccountNumber))
 		// Create basic account entry if it doesn't exist.
@@ -477,7 +477,7 @@ func CreateParty(repo *repository, params *models.CreateCustomerAccount) (string
 // account exists and returns the customer_account_id if it does.
 // If it does not exist it creates the customer account
 // and related rows and returns the new customer_account_id
-func HandlePaymentPartyAccount(repo *repository, params *models.CreateCustomerAccount) (string, error) {
+func HandlePaymentPartyAccount(repo *repository, params *models.CustomerAccount) (string, error) {
 
 	// Check if customer account exists
 	exist, customerAccountID := DoesPartyExist(repo, params)
@@ -626,7 +626,6 @@ func (repo *repository) CreatePayment(ctx context.Context, params *models.Create
 	tx.Commit()
 
 	return &paymentResp, nil
-
 }
 
 // GetPayment is function to get a specific payment
@@ -776,8 +775,7 @@ func getPaymentRow(repo *repository, paymentID string) (PaymentConstruct, error)
 	return paymentConstruct, nil
 }
 
-// UpdatePayment allows updating only specific columns of a payment
-// NOTE Updates are disallowed on most columns
+// UpdatePayment updates a payment and rows in related tables
 func (repo *repository) UpdatePayment(ctx context.Context, params *models.UpdatePayment, paymentID string) (*models.Payment, error) {
 
 	log.Info("entered function UpdatePayment")
@@ -789,34 +787,39 @@ func (repo *repository) UpdatePayment(ctx context.Context, params *models.Update
 
 	// tmp struct to hold values to be
 	// updated to payment row
-	payment, err := getPaymentRow(repo, paymentID)
+	payment := PaymentConstruct{}
+
+	payment.Amount = *params.Amount
+
+	beneficiaryID, err := HandlePaymentPartyAccount(repo, params.Beneficiary)
 	if err != nil {
 		log.Error(log.Trace(), err)
 		return nil, err
 	}
+	payment.BeneficaryID = beneficiaryID
 
-	if params.Reference != "" {
-		payment.Reference = params.Reference
+	debtorID, err := HandlePaymentPartyAccount(repo, params.Debtor)
+	if err != nil {
+		log.Error(log.Trace(), err)
+		return nil, err
 	}
+	payment.DebtorID = debtorID
 
-	if params.PaymentPurpose != "" {
-		payment.PaymentPurpose = params.PaymentPurpose
+	// return &models.Payment{}, nil
+	// Check if the system handles the specified currency or not
+	exist, currencyID := DoesCurrencyExist(repo, params.Currency)
+	if !exist {
+		err = fmt.Errorf("invalid currency for this transaction %s", *params.Currency)
+		log.Error(log.Trace(), err)
+		return nil, utils.ErrNotValidCurrency
 	}
+	payment.CurrencyID = currencyID
 
-	// Create a new payment entry
-	sql := `
-		UPDATE payment
-		SET
-			reference = $1,
-			payment_purpose = $2,
-			updated_at = $3
-		RETURNING payment_id AS ID`
+	payment.PaymentPurpose = params.PaymentPurpose
+	payment.Reference = params.Reference
 
-	log.Info(fmt.Sprintf(log.StripSpecialChars(sql),
-		payment.Reference,
-		payment.PaymentPurpose,
-		time.Now().Unix(),
-	))
+	// Set processing Date to 'now'
+	payment.ProcessingDate = strfmt.Date(time.Now())
 
 	// Begin a transaction
 	tx, err := repo.db.Beginx()
@@ -831,16 +834,55 @@ func (repo *repository) UpdatePayment(ctx context.Context, params *models.Update
 		}
 	}()
 
-	// Insert Statement
-	row := tx.QueryRowx(sql,
+	// Update specified payment entry
+	sql := `
+		UPDATE payment
+		SET
+			beneficary_id = $1,
+			debtor_id = $2,
+			currency_id = $3,
+			amount = $4,
+			numeric_reference = $5,
+			reference = $6,
+			payment_purpose = $7,
+			processing_date = $8
+		RETURNING payment_id AS ID;`
+
+	log.Info(fmt.Sprintf(log.StripSpecialChars(sql),
+		payment.BeneficaryID,
+		payment.DebtorID,
+		payment.CurrencyID,
+		payment.Amount,
+		payment.NumericReference,
 		payment.Reference,
 		payment.PaymentPurpose,
-		time.Now().Unix(),
+		payment.ProcessingDate,
+	))
+
+	// explicity lock the row
+	var res = ""
+	err = tx.Get(&res, "SELECT payment_id FROM payment WHERE payment_id=$1 FOR UPDATE;", paymentID)
+	if err != nil {
+		log.Error(log.Trace(), err)
+		return nil, err
+	}
+
+	// Insert Statement
+	row := tx.QueryRowx(sql,
+		payment.BeneficaryID,
+		payment.DebtorID,
+		payment.CurrencyID,
+		payment.Amount,
+		payment.NumericReference,
+		payment.Reference,
+		payment.PaymentPurpose,
+		payment.ProcessingDate,
 	)
 
 	paymentResp := models.Payment{}
 	if err = row.StructScan(&paymentResp); err != nil {
 		log.Error(log.Trace(), err)
+		return nil, err
 	}
 
 	tx.Commit()
