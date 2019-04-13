@@ -6,11 +6,10 @@ To run as docker you need docker and docker-compose installed.
 
 To run locally you need;
 
-go 1.11+
+- go 1.11+
+- PostgreSQL 9.5
 
-PostgreSQL 9.5
-
-[dbmate](https://github.com/amacneil/dbmate)
+- [dbmate](https://github.com/amacneil/dbmate)
 database migration tool. 
 
 ### quick Start
