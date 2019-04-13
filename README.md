@@ -12,14 +12,13 @@ To run locally you need;
 database migration tool. 
 
 ### quick Start
- - Clone this git repo to your go path. 
-   e.g. go/src/github/
+ - Clone this git repo to your go path. e.g. go/src/github/
 
    `git clone https://github.com/daesu/payments`
 
  - Run as docker container
 
-  `make docker-run`
+   `make docker-run`
 
 Postgresql and the App will be run in docker containers
 
