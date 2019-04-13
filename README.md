@@ -1,5 +1,5 @@
 # payments
-Simple example of a CRUD payments app.
+Simple example of a CRUD app in go.
 
 ### dependencies
 To run as docker you need docker and docker-compose installed.
