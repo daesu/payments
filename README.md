@@ -8,7 +8,6 @@ To run locally you need;
 
 - go 1.11+
 - PostgreSQL 9.5
-
 - [dbmate](https://github.com/amacneil/dbmate)
 database migration tool. 
 
