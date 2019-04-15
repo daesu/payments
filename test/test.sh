@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DATABASE_URL=postgresql://postgres:postgres@localhost/payment_test?sslmode=disable
+export DATABASE_URL=postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/payment_test?sslmode=disable
 
 # start the app in background and grab its pid
 ./bin/payments &

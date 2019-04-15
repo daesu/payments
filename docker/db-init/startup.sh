@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source env 
-
 cd /code/code
 
 echo "kill database..."

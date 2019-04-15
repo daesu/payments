@@ -36,7 +36,8 @@ func Configure(api *operations.PaymentsAPI, service Service) {
 		log.Info("entering PaymentCreatePaymentHandler")
 
 		log.WithFields(logrus.Fields{
-			"HttpRequest": fmt.Sprintf("%#v", *params.HTTPRequest),
+			"HttpRequest":   fmt.Sprintf("%#v", *params.HTTPRequest),
+			"createPayment": fmt.Sprintf("%#v", *params.Payment),
 		}).Info("CreatePaymentHandlerFunc")
 
 		result, err := service.CreatePayment(params.HTTPRequest.Context(), &params)
@@ -65,8 +66,9 @@ func Configure(api *operations.PaymentsAPI, service Service) {
 		log.Info("entering PaymentUpdatePaymentHandler")
 
 		log.WithFields(logrus.Fields{
-			"HttpRequest":   fmt.Sprintf("%#v", *params.HTTPRequest),
-			"UpdatePayment": fmt.Sprintf("%#v", *params.UpdatePayment),
+			"HttpRequest":     fmt.Sprintf("%#v", *params.HTTPRequest),
+			"UpdatePayment":   fmt.Sprintf("%#v", *params.UpdatePayment),
+			"UpdatePaymentID": fmt.Sprintf("%#v", params.PaymentID),
 		}).Info("UpdatePaymentHandlerFunc")
 
 		result, err := service.UpdatePayment(params.HTTPRequest.Context(), &params)

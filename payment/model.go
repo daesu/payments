@@ -2,7 +2,8 @@ package payment
 
 import "github.com/go-openapi/strfmt"
 
-// PaymentConstruct ...
+// PaymentConstruct is a struct to hold payment row data
+// as distinct from the go-swagger generated payment object
 type PaymentConstruct struct {
 	SchemePaymentTypeID string      `json:"scheme_payment_type_id"`
 	OrganisationID      string      `json:"organisation_id"`

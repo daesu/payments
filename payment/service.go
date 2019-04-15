@@ -28,6 +28,7 @@ func NewService(repo Repository) Service {
 	}
 }
 
+// ListPayments calls on repository to get a list of payments
 func (s *service) ListPayments(ctx context.Context, params *payment.ListPaymentsParams) (*models.PaymentList, error) {
 	log.Info("entered service ListPayments")
 
@@ -48,6 +49,8 @@ func (s *service) ListPayments(ctx context.Context, params *payment.ListPayments
 	return &ul, nil
 }
 
+// CreatePayment calls on repository to create a new payment
+// and then to return the payment response expected.
 func (s *service) CreatePayment(ctx context.Context, params *payment.CreatePaymentParams) (*models.Payment, error) {
 	log.Info("entered service CreatePayment")
 
@@ -67,6 +70,7 @@ func (s *service) CreatePayment(ctx context.Context, params *payment.CreatePayme
 
 }
 
+// GetPayment returns the expected payment response.
 func (s *service) GetPayment(ctx context.Context, params *payment.GetPaymentParams) (*models.Payment, error) {
 	log.Info("entered service GetPayment")
 
@@ -79,6 +83,7 @@ func (s *service) GetPayment(ctx context.Context, params *payment.GetPaymentPara
 	return payment, err
 }
 
+// DeletePayment deletes specified payment if it exists
 func (s *service) DeletePayment(ctx context.Context, params *payment.DeletePaymentParams) error {
 	log.Info("entered service DeletePayment")
 
@@ -91,6 +96,8 @@ func (s *service) DeletePayment(ctx context.Context, params *payment.DeletePayme
 	return nil
 }
 
+// UpdatePayment replaces the specified payment with the details specified
+// except for the EnDToEndReference field.
 func (s *service) UpdatePayment(ctx context.Context, params *payment.UpdatePaymentParams) (*models.Payment, error) {
 	log.Info("entered service UpdatePayment")
 

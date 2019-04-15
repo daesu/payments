@@ -14,13 +14,17 @@ COPY . code/
 
 RUN chmod +x /usr/local/bin/dbmate
 
+# COPY env_file /app/env_file
+# RUN source /app/env_file 
+
+# RUN source ./code/code/env_file 
 # Env variables 
-ENV DATABASE_HOST=db
-ENV DATABASE_PASSWORD=postgres
-ENV DATABASE_USERNAME=postgres
-ENV DATABASE_NAME=postgres
-ENV LOG_LEVEL=error
-ENV DATABASE_URL=postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable
+# ENV DATABASE_HOST=db
+# ENV DATABASE_PASSWORD=postgres
+# ENV DATABASE_USERNAME=postgres
+# ENV DATABASE_NAME=postgres
+# ENV LOG_LEVEL=error
+# ENV DATABASE_URL=postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable
 
 RUN echo "Creating DB" 
 CMD [ "./code/docker/db-init/wait-for-pg.sh", "db", "./code/docker/db-init/startup.sh" ]

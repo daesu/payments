@@ -1,6 +1,0 @@
-export DATABASE_HOST=localhost
-export DATABASE_PASSWORD=postgres
-export DATABASE_USERNAME=postgres
-export DATABASE_NAME=payment
-export LOG_LEVEL=fatal
-export DATABASE_URL=postgresql://$DATABASE_USERNAME:$DATABASE_PASSWORD@$DATABASE_HOST/$DATABASE_NAME?sslmode=disable

@@ -661,7 +661,7 @@ func (repo *repository) GetPayment(ctx context.Context, paymentID string) (*mode
 	JOIN scheme_payment_type scheme_payment_type
 		ON scheme_payment_type.scheme_payment_type_id = payment.scheme_payment_type_id
 	WHERE
-		payment_id = $1`
+		payment_id = $1;`
 
 	log.Info(log.StripSpecialChars(sql))
 
@@ -740,39 +740,6 @@ func (repo *repository) DeletePayment(ctx context.Context, paymentID string) err
 	}
 
 	return nil
-}
-
-// getPaymentRow returns only updateable
-// column values from a payment row.
-func getPaymentRow(repo *repository, paymentID string) (PaymentConstruct, error) {
-
-	// TODO what should be updateable?
-	paymentConstruct := PaymentConstruct{}
-
-	sql := `
-	SELECT
-		payment.payment_purpose As PaymentPurpose,
-		payment.reference As Reference	
-	FROM
-		payment payment
-	WHERE
-		payment_id = $1
-	FOR UPDATE;`
-
-	log.Info(log.StripSpecialChars(sql))
-
-	row := repo.db.QueryRow(sql, paymentID)
-
-	if err := row.Scan(
-		&paymentConstruct.PaymentPurpose,
-		&paymentConstruct.Reference,
-	); err != nil {
-
-		log.Error(err.Error(), err)
-		return PaymentConstruct{}, err
-	}
-
-	return paymentConstruct, nil
 }
 
 // UpdatePayment updates a payment and rows in related tables
