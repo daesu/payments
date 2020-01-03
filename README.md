@@ -5,6 +5,7 @@ Simple example of a CRUD app in go.
 To run you need docker and docker-compose installed.
 
 ### dependencies
+
 - go 1.11+
 - PostgreSQL 9.5
 - [dbmate](https://github.com/amacneil/dbmate)
