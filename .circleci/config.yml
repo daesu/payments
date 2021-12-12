@@ -9,7 +9,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: argenti_test
-    working_directory: .
     steps:
       - checkout
       - run: go mod tidy
