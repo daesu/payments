@@ -1,6 +1,7 @@
 version: 2.1
 jobs:
   build:
+    working_directory: ~/repo
     docker:
       - image: circleci/golang:1.15.8
       - image: circleci/postgres:13.2
@@ -11,10 +12,23 @@ jobs:
           POSTGRES_DB: argenti_test
     steps:
       - checkout
-      - run: go mod tidy
-      - run: buffalo plugins install
-      - run: buffalo db migrate -e test
-      # - run: service postgresql start && buffalo test ./...
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go mod download
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Run tests
+          command: |
+            mkdir -p /tmp/test-reports
+            gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+      - store_test_results:
+          path: /tmp/test-reports
     environment:
       DATABASE_URL: "postgres://postgres@localhost:5432/argenti_test?sslmode=disable"
       PORT: 8080
