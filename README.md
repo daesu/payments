@@ -1,7 +1,5 @@
 # payments
 
-[![CircleCI](https://circleci.com/gh/daesu/payments.svg?style=svg)](https://circleci.com/gh/daesu/payments)
-
 Simple example of a CRUD app in go.
 
 ### docker
